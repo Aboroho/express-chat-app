@@ -7,12 +7,12 @@ function notFoundHandler(req, res, next) {
 
 // default error handler
 function errorHandler(err, req, res, next) {
-  console.log(process.env.NODE_ENV === "development");
+  console.log(err);
   const errors =
     process.env.NODE_ENV === "development" ? err : { message: err.message };
   res.status = err.status || 500;
 
-  if (!res.locals.html) {
+  if (res.locals.html) {
     res.locals.errors = errors;
     res.render("error", { title: "error page" });
   } else {

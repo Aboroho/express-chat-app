@@ -29,7 +29,7 @@
         <form method="post" action="/">
           <input
             type="text"
-            name="username"
+            name="email"
             placeholder="enter mobile or email"
             value=""
           />
@@ -39,5 +39,22 @@
         </form>
       </div>
     </div>
+
+    <script>
+      const loginForm = document.querySelector("#login-form form");
+
+      loginForm.onsubmit = async function (event) {
+        event.preventDefault();
+        const formData = new FormData(loginForm);
+
+        const response = await fetch("/", {
+          method: "post",
+          body: formData,
+        });
+
+        const result = await response.json();
+        console.log(result);
+      };
+    </script>
   </body>
 </html>
