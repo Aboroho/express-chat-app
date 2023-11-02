@@ -1,23 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Sumit Saha" />
-    <meta name="owner" content="learnwithsumit.com" />
-    <title><%= title %></title>
-    <link rel="shortcut icon" href="./images/favicon.png" />
-    <link rel="stylesheet" href="./stylesheets/toastify.css" />
-    <link rel="stylesheet" href="./stylesheets/style.css" />
-    <script src="./js/toastify.js"></script>
-  </head>
+<%- include('./partials/header.ejs') %>
   <body>
-    <div class="menu">
-      <div class="menu-item"><a href="/inbox">Inbox</a></div>
-      <div class="menu-item"><a href="/users">Users</a></div>
-      <div class="menu-item"><a href="/">Login</a></div>
-    </div>
+    <%- include('./partials/menu.ejs') %>
 
     <div id="login-container">
       <div id="left-column"></div>
@@ -27,14 +10,23 @@
       </div>
       <div id="login-form">
         <form method="post" action="/">
+          <% if (errors.auth){ %>
+          <p class="error show"><%= errors.auth.msg %></p>
+          <% } %> <% if (errors.username){ %>
+          <p class="error show"><%= errors.username.msg %></p>
+          <% } %>
           <input
             type="text"
-            name="email"
+            name="username"
             placeholder="enter mobile or email"
-            value=""
+            value="<%= username  %>"
           />
-          <p class="error show">Error message here</p>
+
+          <% if (errors.password){ %>
+          <p class="error show"><%= errors.password.msg %></p>
+          <% } %>
           <input type="password" name="password" placeholder="enter password" />
+
           <input type="submit" value="Login" />
         </form>
       </div>
@@ -43,18 +35,18 @@
     <script>
       const loginForm = document.querySelector("#login-form form");
 
-      loginForm.onsubmit = async function (event) {
-        event.preventDefault();
-        const formData = new FormData(loginForm);
+      // loginForm.onsubmit = async function (event) {
+      //   event.preventDefault();
+      //   const formData = new FormData(loginForm);
 
-        const response = await fetch("/", {
-          method: "post",
-          body: formData,
-        });
+      //   const response = await fetch("/", {
+      //     method: "post",
+      //     body: formData,
+      //   });
 
-        const result = await response.json();
-        console.log(result);
-      };
+      //   const result = await response.json();
+      //   console.log(result);
+      // };
     </script>
   </body>
 </html>

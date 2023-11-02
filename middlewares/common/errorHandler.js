@@ -13,7 +13,7 @@ function errorHandler(err, req, res, next) {
   res.status = err.status || 500;
 
   if (res.locals.html) {
-    res.locals.errors = errors;
+    res.locals.errors = errors.msg;
     res.render("error", { title: "error page" });
   } else {
     console.log(err.stack);

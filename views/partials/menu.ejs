@@ -1,0 +1,25 @@
+<div class="menu">
+  <div class="menu-item"><a href="/inbox">Inbox</a></div>
+  <div class="menu-item"><a href="/users">Users</a></div>
+  <% if (Object.keys(user).length > 0){ %>
+  <div class="menu-item">
+    <%= user.name %> <button id="logout-button">Logout</button>
+  </div>
+  <% }else{ %>
+  <div class="menu-item"><a href="/">Login</a></div>
+  <% } %>
+
+  <script>
+    const logout = document.getElementById("logout-button");
+    logout.addEventListener("click", async () => {
+      try {
+        await fetch("/", {
+          method: "delete",
+        });
+        window.location.replace("/");
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  </script>
+</div>

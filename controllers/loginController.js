@@ -11,21 +11,23 @@ function getLogin(req, res, next) {
 
 async function loginHandler(req, res, next) {
   function authError() {
-    return res.status(401).json({
+    const errObject = {
       errors: {
         auth: {
           msg: "Email or password does not match",
         },
       },
-    });
+    };
+    if (res.locals.html) res.render("login", errObject);
+    else res.status(401).json(errObject);
   }
 
-  const { email: emailOrPhone, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     // fetching people with email or phone
     const people = await People.findOne({
-      $or: [{ email: emailOrPhone }, { mobile: emailOrPhone }],
+      $or: [{ email: username }, { mobile: username }],
     });
     //  email or phone does not exist - return auth error
     if (!people) return authError();
@@ -39,19 +41,46 @@ async function loginHandler(req, res, next) {
       { name: people.name, email: people.email, phone: people.phone },
       process.env.JWT_SECRET
     );
-    res.send({
-      status: "authenticated",
-      _token: token,
+
+    res.cookie(process.env.COOKIE_NAME, token, {
+      maxAge: process.env.JWT_EXPIRY,
+      httpOnly: true,
+      signed: true,
     });
+
+    // success response
+    if (res.locals.html) {
+      res.render("inbox");
+    } else {
+      res.json({
+        status: "authenticated",
+        _token: token,
+      });
+    }
   } catch (err) {
-    // any error from the server side - fall back to error handler
-    next(err);
+    // error response
+    if (res.locals.html) {
+      res.render("login", {
+        errors: {
+          common: {
+            msg: "Something unknow happend!!",
+          },
+        },
+      });
+    } else {
+      // any error from the server side - fall back to error handler
+      next(err);
+    }
   }
 }
 
-async function authorize(req, res, next) {}
+async function logoutHandler(req, res) {
+  res.clearCookie(process.env.COOKIE_NAME);
+  res.sendStatus(404);
+}
+
 module.exports = {
   getLogin,
   loginHandler,
-  authorize,
+  logoutHandler,
 };
